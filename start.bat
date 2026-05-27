@@ -43,13 +43,20 @@ if %errorlevel% neq 0 (
     node --import tsx/esm server/src/db/migrate.ts 2>nul
 )
 
+:: Get local IP
+for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /c:"IPv4" 2^>nul') do set LOCAL_IP=%%a
+set LOCAL_IP=%LOCAL_IP: =%
+
 echo.
 echo ═════════════════════════════════════
 echo   前端: http://localhost:5173
+if defined LOCAL_IP echo   局域网: http://%LOCAL_IP%:5173
 echo   后端: http://localhost:3001
 echo ═════════════════════════════════════
 echo.
-echo 在浏览器中打开 http://localhost:5173
+echo 电脑浏览器打开 http://localhost:5173
+if defined LOCAL_IP echo 手机浏览器打开 http://%LOCAL_IP%:5173 （需同一WiFi）
+echo 手机安装APP: 双击运行 share.bat
 echo 按 Ctrl+C 停止所有服务
 echo.
 

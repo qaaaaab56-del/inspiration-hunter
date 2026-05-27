@@ -1,34 +1,34 @@
-const CACHE_NAME = 'inspiration-hunter-v0.1.0';
-const ASSETS = ['/', '/index.html'];
+const CACHE = 'inspiration-hunter-v0.1.0';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetched = fetch(event.request).then((response) => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+// Network-first strategy: always try network, fall back to cache
+self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
+
+  // Skip API calls - let them go directly to network
+  if (e.request.url.includes('/api/')) return;
+
+  e.respondWith(
+    fetch(e.request)
+      .then((res) => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(e.request, clone));
         }
-        return response;
-      });
-      return cached || fetched;
-    })
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });

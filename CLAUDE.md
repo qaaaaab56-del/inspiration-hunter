@@ -26,7 +26,7 @@
 | 状态管理 | Zustand 5 | 轻量全局状态 |
 | PWA | vite-plugin-pwa | autoUpdate 模式 |
 | 后端 | Express 5 + TypeScript | REST API |
-| 数据库 | SQLite (better-sqlite3) | 文件存储于 data/ |
+| 数据库 | SQLite (sql.js, 纯 JS 免编译) | 文件存储于 data/ |
 | AI 服务 | 预留（当前 stub 返回模拟数据） | 真实 API 待接入 |
 | 运行 | concurrently | 前后端同时启动 |
 
@@ -183,6 +183,8 @@ CREATE TABLE inspirations (
 | 日期 | 内容 | 文件 |
 |---|---|---|
 | 2026-05-27 | MVP Phase 1-5 全部初始创建 | 全部 41 个文件 |
+| 2026-05-27 | 修复: better-sqlite3→sql.js, TailwindCSS v4→v3, 版本修正 | client/package.json, server/package.json, server/src/db/*, server/src/services/inspirationService.ts |
+| 2026-05-27 | 添加快捷脚本 start.bat / stop.bat | start.bat, stop.bat |
 
 ---
 
@@ -198,9 +200,8 @@ CREATE TABLE inspirations (
 
 # 开发要点
 
-- **运行**：`npm run setup && npm run dev`（setup 安装依赖 + 运行迁移）
-- **独立迁移**：`npm run migrate -w server`
-- **前端端口**：5173，**后端端口**：3001
-- **API 代理**：Vite 自动代理 /api → localhost:3001
-- **数据库位置**：data/inspirations.db（自动创建）
+- **快捷启动**：双击 `start.bat`（自动安装依赖 + 迁移 + 启动前后端）
+- **快捷停止**：双击 `stop.bat`（关闭端口 5173 和 3001 的进程）
+- **命令行启动**：`npm run dev`
+- **数据库位置**：`data/inspirations.db`（sql.js 纯 JS 实现，免编译）
 - **每次修改后必须更新本文件**

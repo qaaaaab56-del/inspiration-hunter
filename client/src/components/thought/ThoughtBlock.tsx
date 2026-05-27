@@ -1,0 +1,119 @@
+import { useState } from 'react';
+import type { Inspiration } from '../../types';
+import { AIInsight } from './AIInsight';
+
+interface ThoughtBlockProps {
+  inspiration: Inspiration;
+  isActive: boolean;
+  onDelete: (id: string) => void;
+  onProcess: (id: string) => void;
+  onClick: (id: string) => void;
+}
+
+export function ThoughtBlock({ inspiration, isActive, onDelete, onProcess, onClick }: ThoughtBlockProps) {
+  const [showDelete, setShowDelete] = useState(false);
+
+  const time = formatRelativeTime(inspiration.created_at);
+  const isProcessed = inspiration.ai_status === 'done';
+  const isProcessing = inspiration.ai_status === 'processing';
+
+  return (
+    <div
+      className={`
+        group py-5 transition-all duration-300
+        ${isActive ? 'opacity-100' : 'opacity-70'}
+      `}
+    >
+      {/* Content */}
+      <div
+        className="cursor-pointer"
+        onClick={() => onClick(inspiration.id)}
+      >
+        {/* Title or content */}
+        {inspiration.title ? (
+          <div>
+            <p className="text-[15px] font-medium text-[var(--text-primary)] leading-snug">
+              {inspiration.title}
+            </p>
+            <p className="text-[13px] text-[var(--text-tertiary)] mt-1 leading-relaxed line-clamp-2">
+              {inspiration.content}
+            </p>
+          </div>
+        ) : (
+          <p className="text-[15px] text-[var(--text-primary)] leading-relaxed whitespace-pre-wrap">
+            {inspiration.content}
+          </p>
+        )}
+
+        {/* AI summary — subtle inline */}
+        {isProcessed && inspiration.summary && (
+          <p className="text-[13px] text-[var(--text-tertiary)] italic mt-2 leading-relaxed">
+            {inspiration.summary}
+          </p>
+        )}
+
+        {/* Processing state */}
+        {isProcessing && (
+          <p className="text-[12px] text-[var(--text-tertiary)] mt-2 animate-pulse">
+            AI 正在理解...
+          </p>
+        )}
+      </div>
+
+      {/* AI Insight panel */}
+      {isActive && isProcessed && inspiration.extended_thoughts && (
+        <div className="mt-3">
+          <AIInsight thoughts={inspiration.extended_thoughts} />
+        </div>
+      )}
+
+      {/* AI trigger for idle items */}
+      {isActive && inspiration.ai_status === 'idle' && (
+        <button
+          onClick={() => onProcess(inspiration.id)}
+          className="mt-3 text-[12px] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors duration-300"
+        >
+          让 AI 理解这段灵感
+        </button>
+      )}
+
+      {/* Meta row */}
+      <div className="flex items-center gap-3 mt-2">
+        <time className="text-[11px] text-[var(--text-quaternary)]">{time}</time>
+
+        {/* Delete — only visible on hover or confirmed */}
+        <button
+          onClick={() => {
+            if (showDelete) {
+              onDelete(inspiration.id);
+            } else {
+              setShowDelete(true);
+              setTimeout(() => setShowDelete(false), 3000);
+            }
+          }}
+          className={`
+            text-[11px] transition-all duration-300 opacity-0 group-hover:opacity-100
+            ${showDelete ? 'opacity-100 text-red-400' : 'text-[var(--text-quaternary)] hover:text-[var(--text-tertiary)]'}
+          `}
+        >
+          {showDelete ? '确认删除' : '删除'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function formatRelativeTime(iso: string): string {
+  const now = Date.now();
+  const then = new Date(iso).getTime();
+  const diff = now - then;
+  const minutes = Math.floor(diff / 60000);
+
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes} 分钟前`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} 小时前`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days} 天前`;
+  return new Date(iso).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+}

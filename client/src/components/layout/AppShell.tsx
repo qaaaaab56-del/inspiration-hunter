@@ -1,19 +1,18 @@
 import type { ReactNode } from 'react';
-import { Header } from './Header';
 
 interface AppShellProps {
+  sidebar: ReactNode;
   children: ReactNode;
-  header?: ReactNode;
-  showInstall?: boolean;
-  onInstall?: () => void;
 }
 
-export function AppShell({ children, header, showInstall, onInstall }: AppShellProps) {
+export function AppShell({ sidebar, children }: AppShellProps) {
   return (
-    <div className="min-h-dvh flex flex-col bg-stone-50">
-      {header || <Header showInstall={!!showInstall} onInstall={onInstall} />}
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 pb-24">
-        {children}
+    <div className="flex h-dvh bg-white overflow-hidden">
+      {sidebar}
+      <main className="flex-1 overflow-y-auto">
+        <div className="mx-auto px-6 pb-32">
+          {children}
+        </div>
       </main>
     </div>
   );

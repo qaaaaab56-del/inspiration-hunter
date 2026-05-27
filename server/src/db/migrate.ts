@@ -1,5 +1,5 @@
 import { migrate } from './index.js';
 
 console.log('Running migrations...');
-migrate();
+await migrate();
 console.log('Migrations complete.');

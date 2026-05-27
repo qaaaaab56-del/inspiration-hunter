@@ -1,0 +1,22 @@
+{
+  "name": "Inspiration Hunter - 灵感猎人",
+  "short_name": "灵感猎人",
+  "description": "AI 灵感捕获与思维延展系统",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#fafaf9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

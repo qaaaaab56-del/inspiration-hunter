@@ -1,0 +1,20 @@
+{
+  "name": "inspiration-hunter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI 灵感捕获与思维延展系统",
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w client && npm run build -w server",
+    "setup": "npm install && npm run migrate -w server"
+  },
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

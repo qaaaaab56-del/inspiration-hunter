@@ -4,6 +4,7 @@ export interface Inspiration {
   title: string | null;
   summary: string | null;
   keywords: string[] | null;
+  embedding_keywords: string | null;
   extended_thoughts: ExtendedThought[] | null;
   source: 'text' | 'voice';
   ai_status: 'idle' | 'processing' | 'done' | 'error';
@@ -22,22 +23,19 @@ export interface InspirationListResponse {
   hasMore: boolean;
 }
 
-export interface AIProcessRequest {
-  content: string;
-}
-
 export interface AISummarizeResponse {
   summary: string;
 }
 
-export interface AITitleResponse {
-  title: string;
-}
-
-export interface AIKeywordsResponse {
-  keywords: string[];
-}
-
 export interface AIExtendResponse {
   extended_thoughts: ExtendedThought[];
+}
+
+export interface SearchResponse {
+  data: Inspiration[];
+  query: string;
+}
+
+export interface SimilarResponse {
+  data: Inspiration[];
 }

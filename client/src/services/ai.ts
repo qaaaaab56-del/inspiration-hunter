@@ -1,4 +1,4 @@
-import type { AISummarizeResponse, AITitleResponse, AIKeywordsResponse, AIExtendResponse } from '../types';
+import type { AISummarizeResponse, AIExtendResponse } from '../types';
 
 const BASE = '/api/ai';
 
@@ -20,14 +20,6 @@ async function request<T>(url: string, body: Record<string, unknown>): Promise<T
 export const ai = {
   summarize(content: string): Promise<AISummarizeResponse> {
     return request('/summarize', { content });
-  },
-
-  generateTitle(content: string): Promise<AITitleResponse> {
-    return request('/generate-title', { content });
-  },
-
-  extractKeywords(content: string): Promise<AIKeywordsResponse> {
-    return request('/extract-keywords', { content });
   },
 
   extendThought(content: string): Promise<AIExtendResponse> {

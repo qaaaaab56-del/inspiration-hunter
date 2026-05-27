@@ -1,4 +1,4 @@
-import type { Inspiration, InspirationListResponse, CreateInspirationInput } from '../types';
+import type { Inspiration, InspirationListResponse, SearchResponse, SimilarResponse } from '../types';
 
 const BASE = '/api';
 
@@ -17,11 +17,10 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  // Inspirations
-  createInspiration(content: string, source: 'text' | 'voice' = 'text'): Promise<Inspiration> {
+  createInspiration(content: string): Promise<Inspiration> {
     return request<Inspiration>('/inspirations', {
       method: 'POST',
-      body: JSON.stringify({ content, source }),
+      body: JSON.stringify({ content }),
     });
   },
 
@@ -37,14 +36,18 @@ export const api = {
     return request(`/inspirations/${id}`, { method: 'DELETE' });
   },
 
-  processInspiration(id: string): Promise<Inspiration> {
-    return request<Inspiration>(`/inspirations/${id}/process`, { method: 'POST' });
-  },
-
   processAllAI(id: string): Promise<Inspiration> {
     return request<Inspiration>('/ai/process-all', {
       method: 'POST',
       body: JSON.stringify({ inspiration_id: id }),
     });
+  },
+
+  searchInspirations(q: string): Promise<SearchResponse> {
+    return request<SearchResponse>(`/inspirations/search?q=${encodeURIComponent(q)}`);
+  },
+
+  getSimilarInspirations(id: string): Promise<SimilarResponse> {
+    return request<SimilarResponse>(`/inspirations/${id}/similar`);
   },
 };

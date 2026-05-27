@@ -4,6 +4,7 @@ export interface Inspiration {
   title: string | null;
   summary: string | null;
   keywords: string | null;
+  embedding_keywords: string | null;
   extended_thoughts: string | null;
   source: 'text' | 'voice';
   ai_status: 'idle' | 'processing' | 'done' | 'error';

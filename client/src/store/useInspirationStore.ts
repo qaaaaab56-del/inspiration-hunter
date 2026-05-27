@@ -17,6 +17,7 @@ interface InspirationStore {
   selectInspiration: (id: string | null) => void;
   updateInspiration: (id: string, data: Partial<Inspiration>) => void;
   triggerAIProcess: (id: string) => Promise<void>;
+  pollAIStatus: (id: string) => Promise<void>;
 }
 
 const PAGE_SIZE = 20;
@@ -113,6 +114,26 @@ export const useInspirationStore = create<InspirationStore>((set, get) => ({
           i.id === id ? { ...i, ai_status: 'error' as const } : i
         ),
       }));
+    }
+  },
+
+  pollAIStatus: async (id: string) => {
+    const maxAttempts = 20;
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise((r) => setTimeout(r, 1500));
+      try {
+        const updated = await api.getInspiration(id);
+        if (updated.ai_status === 'done' || updated.ai_status === 'error') {
+          set((state) => ({
+            inspirations: state.inspirations.map((insp) =>
+              insp.id === id ? updated : insp
+            ),
+          }));
+          return;
+        }
+      } catch {
+        return;
+      }
     }
   },
 }));

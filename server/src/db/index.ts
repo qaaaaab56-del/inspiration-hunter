@@ -45,12 +45,31 @@ export function saveDb(): void {
 
 export async function migrate(): Promise<void> {
   await initDb();
+
+  // Track applied migrations
+  _db!.run(`CREATE TABLE IF NOT EXISTS _migrations (
+    name TEXT PRIMARY KEY,
+    applied_at TEXT NOT NULL
+  )`);
+
   const migrationsDir = path.resolve(__dirname, 'migrations');
   const files = fs.readdirSync(migrationsDir).filter((f) => f.endsWith('.sql')).sort();
 
   for (const file of files) {
+    // Check if already applied
+    const stmt = _db!.prepare('SELECT 1 FROM _migrations WHERE name = ?');
+    stmt.bind([file]);
+    const alreadyApplied = stmt.step();
+    stmt.free();
+
+    if (alreadyApplied) {
+      console.log(`Migration skipped (already applied): ${file}`);
+      continue;
+    }
+
     const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
     _db!.run(sql);
+    _db!.run('INSERT INTO _migrations (name, applied_at) VALUES (?, ?)', [file, new Date().toISOString()]);
     console.log(`Migration applied: ${file}`);
   }
   saveDb();
